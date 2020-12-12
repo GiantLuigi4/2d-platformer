@@ -7,8 +7,17 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    implementation 'com.github.GiantLuigi4:PhysicsWrapper:f91265095e'
+
+    compile group: 'org.jbox2d', name: 'jbox2d', version: '2.2.1.1', ext: 'pom'
+    compile group: 'org.jbox2d', name: 'jbox2d-serialization', version: '1.1.0'
+    compile group: 'org.jbox2d', name: 'jbox2d-testbed', version: '2.2.1.1'
+    compile group: 'org.jbox2d', name: 'jbox2d-testbed-jogl', version: '1.0.1'
+    compile group: 'org.jbox2d', name: 'jbox2d-library', version: '2.2.1.1'
 }

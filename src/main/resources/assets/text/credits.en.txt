@@ -1,0 +1,17 @@
+Texture Design:
+-Moony
+
+Game Design:
+-Moony
+-GiantLuigi4
+
+Motivation:
+-Moony
+
+Code:
+-GiantLuigi4
+
+Physics:
+-Box2D/JBox2D
+
+This game was originally gonna be a B&W game, with no plans for a story mode...
