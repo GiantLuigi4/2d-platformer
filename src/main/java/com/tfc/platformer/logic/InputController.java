@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public class InputController implements KeyListener, MouseListener, MouseMotionListener {
 	ArrayList<Integer> keys = new ArrayList<>();
 	boolean isLeftDown = false;
+	boolean isRightDown = false;
 	
 	Point mouse = null;
 	
@@ -39,16 +40,14 @@ public class InputController implements KeyListener, MouseListener, MouseMotionL
 	
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (e.getButton() == 1) {
-			isLeftDown = true;
-		}
+		if (e.getButton() == 1) isLeftDown = true;
+		else if (e.getButton() == 3) isRightDown = true;
 	}
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (e.getButton() == 1) {
-			isLeftDown = false;
-		}
+		if (e.getButton() == 1) isLeftDown = false;
+		else if (e.getButton() == 3) isRightDown = false;
 	}
 	
 	@Override
@@ -76,5 +75,9 @@ public class InputController implements KeyListener, MouseListener, MouseMotionL
 	
 	public Point getMouse() {
 		return mouse;
+	}
+	
+	public boolean isRightDown() {
+		return isRightDown;
 	}
 }

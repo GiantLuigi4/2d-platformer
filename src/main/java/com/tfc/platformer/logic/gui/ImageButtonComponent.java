@@ -22,11 +22,16 @@ public class ImageButtonComponent extends GuiComponent {
 	}
 	
 	@Override
-	public void draw(Graphics2D g2d, boolean isHovered) {
+	public void draw(Graphics2D g2d, boolean isHovered, boolean isFocused) {
 		AffineTransform source = g2d.getTransform();
-		g2d.translate(x,y);
-		g2d.scale(width,height);
-		g2d.drawImage(image,0,0,1,1,null);
+		g2d.translate(x, y);
+		g2d.scale(width, height);
+		g2d.drawImage(image, 0, 0, 1, 1, null);
+		if (isFocused) {
+			g2d.scale(0.1f, 0.1f);
+			g2d.setColor(new Color(0, 255, 255));
+			g2d.drawRect(0, 0, 10, 10);
+		}
 		g2d.setTransform(source);
 	}
 	

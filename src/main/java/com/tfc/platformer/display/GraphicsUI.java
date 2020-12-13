@@ -2,16 +2,22 @@ package com.tfc.platformer.display;
 
 import com.tfc.physics.wrapper.common.backend.interfaces.ICollider;
 import com.tfc.platformer.Main;
+import com.tfc.platformer.blocks.BasicBlock;
 import com.tfc.platformer.logic.gui.GuiComponent;
+import com.tfc.platformer.logic.gui.IKeyListenerComponent;
 import com.tfc.platformer.utils.SpriteMap;
 import com.tfc.platformer.utils.math.MathHelper;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class GraphicsUI extends JComponent {
+public class GraphicsUI extends JComponent implements KeyListener {
 	private final GraphicsWorld worldGraphics;
 	private final ICollider player;
 	private final JFrame frame;
@@ -21,6 +27,8 @@ public class GraphicsUI extends JComponent {
 	
 	public static final SpriteMap sprites = new SpriteMap("assets/textures/level_editor");
 	public static final SpriteMap old_player = new SpriteMap("assets/npcs/old_player_char");
+	
+	public int focusedComponent = -1;
 	
 	private boolean shouldClear = false;
 	
@@ -39,6 +47,32 @@ public class GraphicsUI extends JComponent {
 	};
 	
 	private float old_player_title_anim_frame = 0;
+	
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent e) {
+		try {
+			if (e.getKeyCode() == KeyEvent.VK_ENTER) guiComponents.get(focusedComponent).onClick();
+			System.out.println(e.getKeyCode());
+			if (e.getKeyCode() == KeyEvent.VK_BACK_QUOTE) {
+				if (Main.inputController.isKeyPressed(KeyEvent.VK_SHIFT)) focusedComponent -= 1;
+				else focusedComponent += 1;
+				if (focusedComponent < 0) focusedComponent = guiComponents.size() - 1;
+				else if (focusedComponent >= guiComponents.size()) focusedComponent = 0;
+			}
+			
+			if (guiComponents.get(focusedComponent) instanceof IKeyListenerComponent)
+				((IKeyListenerComponent) guiComponents.get(focusedComponent)).onKeyPressed(e.getKeyCode());
+		} catch (Throwable ignored) {
+		}
+	}
+	
+	@Override
+	public void keyReleased(KeyEvent e) {
+	}
 	
 	public GraphicsUI(ICollider player, JFrame frame, GraphicsWorld worldGraphics) {
 		this.player = player;
@@ -105,15 +139,46 @@ public class GraphicsUI extends JComponent {
 					g2d.translate(x * 8, -80);
 					g2d.scale(0.1f, 0.1f);
 					for (int y = -10; y <= 10; y++) {
-						if (x == 0 || y == 0) {
-							g2d.setColor(new Color(0, 255, 0));
-						} else {
-							g2d.setColor(new Color(128, 128, 128));
-						}
+						if (x == 0 || y == 0) g2d.setColor(new Color(0, 255, 0));
+						else g2d.setColor(new Color(128, 128, 128));
 						
 						if (((mxFromCenter + offX)) / 80 >= (x - 1) && ((mxFromCenter + offX)) / 80 <= (x))
-							if (((myFromCenter - offY)) / 80 >= (y) && ((myFromCenter - offY)) / 80 <= (y + 1))
+							if (((myFromCenter - offY)) / 80 >= (y) && ((myFromCenter - offY)) / 80 <= (y + 1)) {
 								g2d.setColor(new Color(255, 0, 0));
+								if (Main.inputController.isLeftDown()) {
+									AtomicBoolean hasThing = new AtomicBoolean(false);
+									int finalY = y;
+									int finalX = x;
+									Main.world.getColliders().forEach((collider) -> {
+										if (collider instanceof BasicBlock) {
+											if (
+													((BasicBlock) collider).getX() == -(int) (screenX / 8) * 8 + (finalX * 8 + 16) &&
+															((BasicBlock) collider).getY() == -(int) (screenY / 8) * 8 + (finalY * 8)
+											) hasThing.set(true);
+										}
+									});
+									if (!hasThing.get()) {
+										BasicBlock block = new BasicBlock(4, 4, () -> false);
+										block.move(
+												-(int) (screenX / 8) * 8 + (x * 8 + 16),
+												-(int) (screenY / 8) * 8 + (y * 8)
+										);
+										block.setImmovable();
+										Main.world.addCollider(block);
+									}
+								} else if (Main.inputController.isRightDown()) {
+									int finalY = y;
+									int finalX = x;
+									Main.world.getColliders().forEach((collider) -> {
+										if (collider instanceof BasicBlock) {
+											if (
+													((BasicBlock) collider).getX() == -(int) (screenX / 8) * 8 + (finalX * 8 + 16) &&
+															((BasicBlock) collider).getY() == -(int) (screenY / 8) * 8 + (finalY * 8)
+											) Main.world.removeCollider(collider);
+										}
+									});
+								}
+							}
 						
 						g2d.translate(0, 80);
 						g2d.drawRect(1, 1, 77, 77);
@@ -177,11 +242,14 @@ public class GraphicsUI extends JComponent {
 		
 		g2d.scale(frame.getWidth(), frame.getHeight());
 		
+		AtomicInteger index = new AtomicInteger(0);
 		guiComponents.forEach((component) -> {
-			component.draw((Graphics2D) g, component.isInBounds(finalMx, finalMy));
+			component.draw((Graphics2D) g, component.isInBounds(finalMx, finalMy), focusedComponent == index.get());
 			if (component.isInBounds(finalMx, finalMy) && Main.inputController.isLeftDown()) {
 				component.onClick();
+				focusedComponent = index.get();
 			}
+			index.getAndAdd(1);
 		});
 		
 		if (shouldClear) {
@@ -201,5 +269,6 @@ public class GraphicsUI extends JComponent {
 		guiComponents.clear();
 		shouldClear = false;
 		clearListeners.forEach(Runnable::run);
+		focusedComponent = -1;
 	}
 }

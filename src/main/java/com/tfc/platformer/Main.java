@@ -4,21 +4,21 @@ import com.tfc.physics.wrapper.Physics;
 import com.tfc.physics.wrapper.common.API.Vector2;
 import com.tfc.physics.wrapper.common.API.WrapperWorld;
 import com.tfc.physics.wrapper.common.API.listeners.CollisionListener;
+import com.tfc.platformer.blocks.BasicBlock;
 import com.tfc.platformer.display.GraphicsUI;
 import com.tfc.platformer.display.GraphicsWorld;
 import com.tfc.platformer.logic.GroundCollisionListener;
 import com.tfc.platformer.logic.InputController;
-import com.tfc.platformer.logic.colliders.TexturedBoxCollider;
 import com.tfc.platformer.logic.colliders.TexturedBoxEntityCollider;
 import com.tfc.platformer.logic.gui.ImageButtonComponent;
 import com.tfc.platformer.logic.gui.TextButtonComponent;
+import com.tfc.platformer.utils.CSVReader;
 import com.tfc.platformer.utils.ResourceManager;
 import com.tfc.platformer.utils.math.MathHelper;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Random;
 
 public class Main {
 	private static final BufferedImage playerAsset = ResourceManager.getImage("assets/textures/player_temp.png");
@@ -43,14 +43,16 @@ public class Main {
 		world.addCollider(playerCollider);
 		
 		world.allowSleep(false);
+
+//		int y = 20 / 8;
+//		y += new Random().nextInt(3) - 1;
+//		int i;
+//		for (i = 0; i <= 10; i++) {
+//			addColumn(i, y);
+//			y += new Random().nextInt(3) - 1;
+//		}
 		
-		int y = 20 / 8;
-		y += new Random().nextInt(3) - 1;
-		int i;
-		for (i = 0; i <= 10; i++) {
-			addColumn(i, y);
-			y += new Random().nextInt(3) - 1;
-		}
+		loadRoom("test_room");
 		
 		GraphicsWorld world_graphics = new GraphicsWorld(world, playerCollider, window);
 		window.add(world_graphics);
@@ -91,11 +93,12 @@ public class Main {
 		gui.setOpaque(false);
 		world_graphics.addChild(gui);
 		window.addKeyListener(inputController);
+		window.addKeyListener(gui);
 		window.addMouseListener(inputController);
 		window.addMouseMotionListener(inputController);
 		
 		window.setTitle("2D Platformer");
-		window.setSize(1000,1000);
+		window.setSize(1000, 1000);
 		window.setVisible(true);
 		
 		world.addCollisionListener(collisionListener);
@@ -103,6 +106,13 @@ public class Main {
 		while (window.isVisible()) tick();
 		
 		Runtime.getRuntime().exit(0);
+	}
+	
+	public static void loadRoom(String name) {
+		CSVReader reader = new CSVReader(Main.class.getClassLoader().getResourceAsStream("rooms/" + name + ".csv"));
+		for (int i = 0; i < reader.countRows(); i++) {
+			world.addCollider(BasicBlock.fromString(reader.getRow(i)));
+		}
 	}
 	
 	public static void tick() {
@@ -147,8 +157,8 @@ public class Main {
 	private static void addColumn(int x, int y) {
 //		TexturedBoxCollider collider = (TexturedBoxCollider)new TexturedBoxCollider(4,4,()->Graphics.mintyFields.getAsset("grass_side"),()->false).move(x*8,y*8).setImmovable();
 		for (int yPos = y; yPos<=10;yPos++) {
-			TexturedBoxCollider collider;
-			collider = (TexturedBoxCollider) new TexturedBoxCollider(4, 4, () -> GraphicsWorld.legacy.getAsset("brick"), () -> false).move(x * 8, yPos * 8).setImmovable();
+			BasicBlock collider;
+			collider = (BasicBlock) new BasicBlock(4, 4, () -> false).move(x * 8, yPos * 8).setImmovable();
 //			if (yPos == y) {
 //				collider = (TexturedBoxCollider)new TexturedBoxCollider(4,4,()-> GraphicsWorld.mintyFields.getAsset("grass_side"),()->false).move(x*8,yPos*8).setImmovable();
 //			} else {

@@ -2,6 +2,7 @@ package com.tfc.platformer.utils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class SpriteSheet {
@@ -19,6 +20,10 @@ public class SpriteSheet {
 		
 		this.resX = getCoordX(properties.getValue("res"));
 		this.resY = getCoordY(properties.getValue("res"));
+	}
+	
+	public Collection<String> getAllNames() {
+		return sections.keySet();
 	}
 	
 	public Image getAsset(String piece) {

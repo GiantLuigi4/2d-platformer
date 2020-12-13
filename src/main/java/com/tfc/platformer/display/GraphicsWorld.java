@@ -10,6 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 public class GraphicsWorld extends JComponent {
 	private final WrapperWorld world;
@@ -64,12 +66,27 @@ public class GraphicsWorld extends JComponent {
 			g2d.setTransform(transform);
 		}
 		
-		children.forEach((c)->{
+		children.forEach((c) -> {
 			c.paint(g);
 		});
 	}
 	
 	public void addChild(Component g) {
 		children.add(g);
+	}
+	
+	public static SpriteSheet getSheet(String name) {
+		switch (name) {
+			case "minty":
+				return mintyFields;
+			case "legacy":
+				return legacy;
+			default:
+				return null;
+		}
+	}
+	
+	public static Collection<String> getAllSheets() {
+		return Arrays.asList("minty", "legacy");
 	}
 }

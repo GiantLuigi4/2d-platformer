@@ -1,18 +1,20 @@
 package com.tfc.platformer.logic.gui;
 
+import com.tfc.platformer.Main;
 import com.tfc.platformer.logic.helpers.Box2D;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class TextButtonComponent extends GuiComponent {
-	private float x,y;
-	private final float width,height;
+public class StringFieldComponent extends GuiComponent implements IKeyListenerComponent {
+	private final float width, height;
 	private final Runnable onClick;
 	private final Color color;
-	private final String text;
+	private final AtomicReference<String> text;
+	private float x, y;
 	
-	public TextButtonComponent(String text, float x, float y, float width, float height, Color color, Runnable onClick) {
+	public StringFieldComponent(AtomicReference<String> text, float x, float y, float width, float height, Color color, Runnable onClick) {
 		this.text = text;
 		this.x = x;
 		this.y = y;
@@ -26,6 +28,7 @@ public class TextButtonComponent extends GuiComponent {
 	public void draw(Graphics2D g2d, boolean isHovered, boolean isFocused) {
 		Color color = this.color;
 		if (isHovered) color = color.darker();
+		if (isFocused) color = color.darker();
 		AffineTransform source = g2d.getTransform();
 		g2d.setColor(color);
 		g2d.translate(x, y);
@@ -40,12 +43,11 @@ public class TextButtonComponent extends GuiComponent {
 		g2d.scale(width, width);
 		g2d.translate(0, (height * 3f));
 		g2d.scale(0.025f / 2, 0.025f);
-		float width = g2d.getFontMetrics().stringWidth(text);
+		float width = g2d.getFontMetrics().stringWidth(text.get());
 		g2d.translate(width / 6f, 0);
-		g2d.drawString(text, 0, 0);
+		g2d.drawString(text.get(), 0, 0);
 		g2d.setTransform(outline);
-		if (isFocused) g2d.setColor(new Color(0, 255, 255));
-		else g2d.setColor(color.darker());
+		g2d.setColor(color.darker());
 		g2d.drawRect(0, 0, 20 * 2, 3 * 2);
 		g2d.setTransform(source);
 	}
@@ -67,6 +69,14 @@ public class TextButtonComponent extends GuiComponent {
 	
 	@Override
 	public boolean isInBounds(float x, float y) {
-		return Box2D.create(this.x,this.y,width,height).collides(Box2D.create(x,y,0.001f,0.001f));
+		return Box2D.create(this.x, this.y, width, height).collides(Box2D.create(x, y, 0.001f, 0.001f));
+	}
+	
+	@Override
+	public void onKeyPressed(int key) {
+		if (key == 8) this.text.set(this.text.get().substring(0, this.text.get().length() - 1));
+		else if (key == 16) ;
+		else if (Main.inputController.isKeyPressed(16)) this.text.set(this.text.get() + ((char) key));
+		else this.text.set(this.text.get() + ((((char) key) + "").toLowerCase()));
 	}
 }
