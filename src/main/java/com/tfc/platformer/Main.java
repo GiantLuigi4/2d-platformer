@@ -44,25 +44,25 @@ public class Main {
 		
 		world.allowSleep(false);
 		
-		int y = 20/8;
-		y+= new Random().nextInt(3)-1;
+		int y = 20 / 8;
+		y += new Random().nextInt(3) - 1;
 		int i;
-		for (i=0; i<=10;i++) {
-			addColumn(i,y);
-			y+= new Random().nextInt(3)-1;
+		for (i = 0; i <= 10; i++) {
+			addColumn(i, y);
+			y += new Random().nextInt(3) - 1;
 		}
 		
 		GraphicsWorld world_graphics = new GraphicsWorld(world, playerCollider, window);
 		window.add(world_graphics);
-		GraphicsUI gui = new GraphicsUI(playerCollider, window);
-		gui.addClearListener(()->{
+		GraphicsUI gui = new GraphicsUI(playerCollider, window, world_graphics);
+		gui.addClearListener(() -> {
 			if (inGame) {
-				gui.guiComponents.add(new ImageButtonComponent("assets/textures/game/quit_game.png",0.9f,0,0.1f,0.1f,()->{
+				gui.guiComponents.add(new ImageButtonComponent("assets/textures/game/quit_game.png", 0.9f, 0, 0.1f, 0.1f, () -> {
 					inGame = false;
 					gui.queueClear();
 				}));
 			} else if (!inEditor) {
-				gui.guiComponents.add(new TextButtonComponent("Play Game",0.5f-(0.25f/2),0.4f,0.25f,0.1f,new Color(128,128,128),()->{
+				gui.guiComponents.add(new TextButtonComponent("Play Game", 0.5f - (0.25f / 2), 0.4f, 0.25f, 0.1f, new Color(128, 128, 128), () -> {
 					inGame = true;
 					gui.queueClear();
 				}));
@@ -148,11 +148,12 @@ public class Main {
 //		TexturedBoxCollider collider = (TexturedBoxCollider)new TexturedBoxCollider(4,4,()->Graphics.mintyFields.getAsset("grass_side"),()->false).move(x*8,y*8).setImmovable();
 		for (int yPos = y; yPos<=10;yPos++) {
 			TexturedBoxCollider collider;
-			if (yPos == y) {
-				collider = (TexturedBoxCollider)new TexturedBoxCollider(4,4,()-> GraphicsWorld.mintyFields.getAsset("grass_side"),()->false).move(x*8,yPos*8).setImmovable();
-			} else {
-				collider = (TexturedBoxCollider)new TexturedBoxCollider(4,4,()-> GraphicsWorld.mintyFields.getAsset("dirt"),()->false).move(x*8,yPos*8).setImmovable();
-			}
+			collider = (TexturedBoxCollider) new TexturedBoxCollider(4, 4, () -> GraphicsWorld.legacy.getAsset("brick"), () -> false).move(x * 8, yPos * 8).setImmovable();
+//			if (yPos == y) {
+//				collider = (TexturedBoxCollider)new TexturedBoxCollider(4,4,()-> GraphicsWorld.mintyFields.getAsset("grass_side"),()->false).move(x*8,yPos*8).setImmovable();
+//			} else {
+//				collider = (TexturedBoxCollider)new TexturedBoxCollider(4,4,()-> GraphicsWorld.mintyFields.getAsset("dirt"),()->false).move(x*8,yPos*8).setImmovable();
+//			}
 			world.addCollider(collider);
 		}
 	}

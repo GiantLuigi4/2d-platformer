@@ -16,10 +16,11 @@ public class GraphicsWorld extends JComponent {
 	private final ICollider player;
 	private final JFrame frame;
 	
-	private float lastPosX = 0;
-	private float lastPosY = 0;
+	public static final SpriteSheet legacy = new SpriteSheet("assets/textures/levels/legacy");
+	protected float lastPosX = 0;
 	
 	public static final SpriteSheet mintyFields = new SpriteSheet("assets/textures/levels/minty");
+	protected float lastPosY = 0;
 	
 	public GraphicsWorld(WrapperWorld world, ICollider player, JFrame frame) {
 		this.world = world;
@@ -43,19 +44,23 @@ public class GraphicsWorld extends JComponent {
 			AffineTransform transform = g2d.getTransform();
 			
 			g2d.translate(frame.getWidth() / 2f, frame.getHeight() / 2f);
-			g2d.scale(10,10);
+			g2d.scale(10, 10);
 			
-			g2d.translate(lastPosX,lastPosY);
-			lastPosX = MathHelper.lerp(0.1f,lastPosX,-player.getPositionSupplier().get().x);
-			lastPosY = MathHelper.lerp(0.1f,lastPosY,-player.getPositionSupplier().get().y);
+			g2d.translate(lastPosX, lastPosY);
+			if (Main.inEditor) {
+				lastPosX = -player.getPositionSupplier().get().x;
+				lastPosY = -player.getPositionSupplier().get().y;
+			}
+			lastPosX = MathHelper.lerp(0.1f, lastPosX, -player.getPositionSupplier().get().x);
+			lastPosY = MathHelper.lerp(0.1f, lastPosY, -player.getPositionSupplier().get().y);
 			
 			world.getColliders().forEach(collider -> {
 				AffineTransform transform1 = g2d.getTransform();
 				collider.draw(g2d);
 				g2d.setTransform(transform1);
 			});
-			player.draw((Graphics2D)g);
-
+			player.draw((Graphics2D) g);
+			
 			g2d.setTransform(transform);
 		}
 		
