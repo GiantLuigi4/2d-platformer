@@ -53,8 +53,8 @@ public class GraphicsUI extends JComponent {
 		float my = -1;
 		
 		if (mouse != null) {
-			mx = ((float)(mouse.x-7)/frame.getWidth());
-			my = ((float)(mouse.y-27)/frame.getHeight());
+			mx = ((float) (mouse.x - 7) / frame.getWidth());
+			my = ((float) (mouse.y - 27) / frame.getHeight());
 		}
 		
 		final float finalMx = mx;
@@ -100,28 +100,26 @@ public class GraphicsUI extends JComponent {
 				float screenX = worldGraphics.lastPosX;
 				float screenY = worldGraphics.lastPosY;
 				
-				if (Main.inEditor) {
-					for (int x = -10; x <= 10; x++) {
-						AffineTransform transform1 = g2d.getTransform();
-						g2d.translate(x * 8, -80);
-						g2d.scale(0.1f, 0.1f);
-						for (int y = -10; y <= 10; y++) {
-							if (x == 0 || y == 0) {
-								g2d.setColor(new Color(0, 255, 0));
-							} else {
-								g2d.setColor(new Color(128, 128, 128));
-							}
-							
-							if (((mxFromCenter + offX)) / 80 >= (x - 1) && ((mxFromCenter + offX)) / 80 <= (x))
-								if (((myFromCenter - offY)) / 80 >= (y) && ((myFromCenter - offY)) / 80 <= (y + 1))
-									g2d.setColor(new Color(255, 0, 0));
-							
-							g2d.translate(0, 80);
-							g2d.drawRect(1, 1, 77, 77);
-							g2d.drawRect(2, 2, 75, 75);
+				for (int x = -10; x <= 10; x++) {
+					AffineTransform transform1 = g2d.getTransform();
+					g2d.translate(x * 8, -80);
+					g2d.scale(0.1f, 0.1f);
+					for (int y = -10; y <= 10; y++) {
+						if (x == 0 || y == 0) {
+							g2d.setColor(new Color(0, 255, 0));
+						} else {
+							g2d.setColor(new Color(128, 128, 128));
 						}
-						g2d.setTransform(transform1);
+						
+						if (((mxFromCenter + offX)) / 80 >= (x - 1) && ((mxFromCenter + offX)) / 80 <= (x))
+							if (((myFromCenter - offY)) / 80 >= (y) && ((myFromCenter - offY)) / 80 <= (y + 1))
+								g2d.setColor(new Color(255, 0, 0));
+						
+						g2d.translate(0, 80);
+						g2d.drawRect(1, 1, 77, 77);
+						g2d.drawRect(2, 2, 75, 75);
 					}
+					g2d.setTransform(transform1);
 				}
 				g2d.translate(-4, -4);
 				
@@ -177,11 +175,11 @@ public class GraphicsUI extends JComponent {
 			g2d.setColor(new Color(255, 255, 255));
 		}
 		
-		g2d.scale(frame.getWidth(),frame.getHeight());
+		g2d.scale(frame.getWidth(), frame.getHeight());
 		
 		guiComponents.forEach((component) -> {
 			component.draw((Graphics2D) g, component.isInBounds(finalMx, finalMy));
-			if (component.isInBounds(finalMx,finalMy) && Main.inputController.isLeftDown()) {
+			if (component.isInBounds(finalMx, finalMy) && Main.inputController.isLeftDown()) {
 				component.onClick();
 			}
 		});
