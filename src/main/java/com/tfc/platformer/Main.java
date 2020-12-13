@@ -59,7 +59,7 @@ public class Main {
 		GraphicsUI gui = new GraphicsUI(playerCollider, window, world_graphics);
 		gui.addClearListener(() -> {
 			if (inGame) {
-				gui.guiComponents.add(new ImageButtonComponent("assets/textures/game/quit_game.png", 0.9f, 0, 0.1f, 0.1f, () -> {
+				gui.guiComponents.add(new ImageButtonComponent("assets/textures/game/quit_game.png", 0.95f, 0, 0.05f, 0.1f, () -> {
 					inGame = false;
 					gui.queueClear();
 				}));
