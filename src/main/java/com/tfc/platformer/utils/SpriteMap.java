@@ -10,8 +10,8 @@ public class SpriteMap {
 	public SpriteMap(String name) {
 		this.properties = (ResourceManager.getPropertiesFromCL(name + "/asset_list.properties"));
 		
-		properties.getEntries().forEach((entry)->{
-			images.put(entry,ResourceManager.getImage(name+"/"+properties.getValue(entry)));
+		properties.getEntries().forEach((entry) -> {
+			images.put(entry, ResourceManager.getImage(name + "/" + properties.getValue(entry)));
 		});
 	}
 	

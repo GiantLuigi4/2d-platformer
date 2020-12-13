@@ -1,7 +1,7 @@
 package com.tfc.platformer.logic.helpers;
 
 public class Line2D {
-	private Vector2D start,ray;
+	private Vector2D start, ray;
 	
 	public Line2D(Vector2D start, Vector2D ray) {
 		this.start = start;
@@ -10,12 +10,12 @@ public class Line2D {
 	
 	public Line2D(Vector2D start, double v, double v1) {
 		this.start = start;
-		this.ray = new Vector2D(start.x-v,start.y-v1);
+		this.ray = new Vector2D(start.x - v, start.y - v1);
 	}
 	
 	public Line2D(float v, float v1, float v2, float v3) {
-		this.start = new Vector2D(v,v1);
-		this.ray = new Vector2D(v2,v3).subtract(v,v1);
+		this.start = new Vector2D(v, v1);
+		this.ray = new Vector2D(v2, v3).subtract(v, v1);
 	}
 	
 	public Vector2D getStart() {
@@ -36,8 +36,8 @@ public class Line2D {
 		} else if (otherStart.x == otherEnd.x) {
 			return true;
 		} else {
-			double m1 = (start.y-end.y)/(start.x-end.x);
-			double m2 = (otherStart.y-otherEnd.y)/(otherStart.x-otherEnd.x);
+			double m1 = (start.y - end.y) / (start.x - end.x);
+			double m2 = (otherStart.y - otherEnd.y) / (otherStart.x - otherEnd.x);
 			return m1 != m2;
 		}
 	}
@@ -53,6 +53,6 @@ public class Line2D {
 	}
 	
 	public Vector2D getPoint(double dist) {
-		return start.lerp(dist,getEnd());
+		return start.lerp(dist, getEnd());
 	}
 }

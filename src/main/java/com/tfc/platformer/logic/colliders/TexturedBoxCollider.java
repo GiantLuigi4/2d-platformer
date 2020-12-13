@@ -32,11 +32,11 @@ public class TexturedBoxCollider extends BoxCollider {
 		g2d.drawImage(this.getTexture(), 0, 0, width * 2, height * 2, null);
 		g2d.setTransform(transform);
 		if (Main.inEditor) {
-			g2d.scale(0.1f,0.1f);
-			g2d.drawRect(-width*10,-height*10,width*20,height*20);
+			g2d.scale(0.1f, 0.1f);
+			g2d.drawRect(-width * 10, -height * 10, width * 20, height * 20);
 		}
 		g2d.setTransform(source);
-		
+
 //		super.draw(g2d);
 	}
 	

@@ -14,11 +14,12 @@ import com.tfc.platformer.logic.gui.ImageButtonComponent;
 import com.tfc.platformer.logic.gui.TextButtonComponent;
 import com.tfc.platformer.utils.CSVReader;
 import com.tfc.platformer.utils.ResourceManager;
-import com.tfc.platformer.utils.math.MathHelper;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class Main {
 	private static final BufferedImage playerAsset = ResourceManager.getImage("assets/textures/player_temp.png");
@@ -53,6 +54,7 @@ public class Main {
 //		}
 		
 		loadRoom("test_room");
+		window.setIconImage(ResourceManager.getImage("assets/textures/icon/16x.png"));
 		
 		GraphicsWorld world_graphics = new GraphicsWorld(world, playerCollider, window);
 		window.add(world_graphics);
@@ -68,22 +70,42 @@ public class Main {
 					inGame = true;
 					gui.queueClear();
 				}));
-				gui.guiComponents.add(new TextButtonComponent("Open Editor",0.5f-(0.25f/2),0.5f,0.25f,0.1f,new Color(128,128,128),()->{
+				gui.guiComponents.add(new TextButtonComponent("Open Editor", 0.5f - (0.25f / 2), 0.5f, 0.25f, 0.1f, new Color(128, 128, 128), () -> {
 					inEditor = true;
 					gui.queueClear();
 				}));
 			}
 			if (inEditor) {
-				gui.guiComponents.add(new TextButtonComponent("Leave Editor",0.5f-(0.25f/2),0,0.25f,0.1f,new Color(128,128,128),()->{
+				gui.guiComponents.add(new TextButtonComponent("Leave Editor", 0.5f - (0.25f / 2), 0, 0.25f, 0.1f, new Color(128, 128, 128), () -> {
 					inEditor = false;
 					inGame = false;
 					gui.queueClear();
 				}));
 				if (!inGame) {
-					gui.guiComponents.add(new TextButtonComponent("Play Test",0,0,0.25f,0.1f,new Color(128,128,128),()->{
+					gui.guiComponents.add(new TextButtonComponent("Play Test", 0, 0, 0.25f, 0.1f, new Color(128, 128, 128), () -> {
 						playerCollider.getPositionSetter().setX(0);
 						playerCollider.getPositionSetter().setY(0);
 						inGame = true;
+						gui.queueClear();
+					}));
+					gui.guiComponents.add(new TextButtonComponent("Export To File", 0, 0.1f, 0.25f, 0.1f, new Color(128, 128, 128), () -> {
+						try {
+							File f = new File("rooms/exported/room.csv");
+							if (!f.exists()) {
+								f.getParentFile().mkdirs();
+								f.createNewFile();
+							}
+							FileOutputStream stream = new FileOutputStream(f);
+							StringBuilder builder = new StringBuilder();
+							world.getColliders().forEach((collider) -> {
+								if (collider instanceof BasicBlock) {
+									builder.append(((BasicBlock) collider).getString()).append("\n");
+								}
+							});
+							stream.write(builder.toString().getBytes());
+							stream.close();
+						} catch (Throwable ignored) {
+						}
 						gui.queueClear();
 					}));
 				}
@@ -134,8 +156,19 @@ public class Main {
 				else if (!inputController.isKeyPressed(87)) jumpTime = 9999;
 				maxJumpTime = 14;
 				
-				if (playerCollider.isOnGround())
-					playerCollider.setAngle(MathHelper.lerp(0.1f, playerCollider.getAngle(), 0));
+				playerCollider.setAngle(
+						Math.toRadians(Math.min(
+								Math.max(
+										-45,
+										Math.toDegrees(playerCollider.getAngle())
+								),
+								45
+						))
+				);
+
+//				if (playerCollider.isOnGround()) {
+//					playerCollider.setAngle(Math.toRadians(MathHelper.lerp(0.9f, Math.toDegrees(playerCollider.getAngle()), 0)));
+//				}
 			} else if (inEditor) {
 				if (inputController.isKeyPressed(68))
 					playerCollider.getPositionSetter().setX(playerCollider.getX() + 0.5);
@@ -156,7 +189,7 @@ public class Main {
 	
 	private static void addColumn(int x, int y) {
 //		TexturedBoxCollider collider = (TexturedBoxCollider)new TexturedBoxCollider(4,4,()->Graphics.mintyFields.getAsset("grass_side"),()->false).move(x*8,y*8).setImmovable();
-		for (int yPos = y; yPos<=10;yPos++) {
+		for (int yPos = y; yPos <= 10; yPos++) {
 			BasicBlock collider;
 			collider = (BasicBlock) new BasicBlock(4, 4, () -> false).move(x * 8, yPos * 8).setImmovable();
 //			if (yPos == y) {

@@ -16,6 +16,7 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class GraphicsUI extends JComponent implements KeyListener {
 	private final GraphicsWorld worldGraphics;
@@ -23,6 +24,7 @@ public class GraphicsUI extends JComponent implements KeyListener {
 	private final JFrame frame;
 	
 	public ArrayList<GuiComponent> guiComponents = new ArrayList<>();
+	public ArrayList<GuiComponent> guiComponentsBlock = new ArrayList<>();
 	public ArrayList<Runnable> clearListeners = new ArrayList<>();
 	
 	public static final SpriteMap sprites = new SpriteMap("assets/textures/level_editor");
@@ -34,6 +36,8 @@ public class GraphicsUI extends JComponent implements KeyListener {
 	
 	private float lPanelExtendProgress = 0;
 	private boolean isLPanelExtending = false;
+	public BasicBlock selectedBlock = null;
+	private boolean hasBlockSelected = false;
 	
 	private final String[] old_player_title_anim = new String[]{
 			"idle",
@@ -99,6 +103,11 @@ public class GraphicsUI extends JComponent implements KeyListener {
 			my *= frame.getHeight();
 		}
 		
+		AtomicBoolean didClick = new AtomicBoolean(false);
+		guiComponents.forEach((component) -> {
+			if (component.isInBounds(finalMx, finalMy) && Main.inputController.isLeftDown()) didClick.set(true);
+		});
+		
 		g.setColor(new Color(0, 0, 0, 0));
 		
 		Graphics2D g2d = ((Graphics2D) g);
@@ -146,25 +155,53 @@ public class GraphicsUI extends JComponent implements KeyListener {
 							if (((myFromCenter - offY)) / 80 >= (y) && ((myFromCenter - offY)) / 80 <= (y + 1)) {
 								g2d.setColor(new Color(255, 0, 0));
 								if (Main.inputController.isLeftDown()) {
-									AtomicBoolean hasThing = new AtomicBoolean(false);
-									int finalY = y;
-									int finalX = x;
-									Main.world.getColliders().forEach((collider) -> {
-										if (collider instanceof BasicBlock) {
-											if (
-													((BasicBlock) collider).getX() == -(int) (screenX / 8) * 8 + (finalX * 8 + 16) &&
-															((BasicBlock) collider).getY() == -(int) (screenY / 8) * 8 + (finalY * 8)
-											) hasThing.set(true);
+									if (!didClick.get()) {
+										AtomicBoolean hasThing = new AtomicBoolean(false);
+										int finalY = y;
+										int finalX = x;
+										
+										AtomicReference<BasicBlock> newSelectedBlock = new AtomicReference<>(null);
+										Main.world.getColliders().forEach((collider) -> {
+											if (collider instanceof BasicBlock) {
+												if (
+														((BasicBlock) collider).getX() == -(int) (screenX / 8) * 8 + (finalX * 8 + 16) &&
+																((BasicBlock) collider).getY() == -(int) (screenY / 8) * 8 + (finalY * 8)
+												) {
+													hasThing.set(true);
+													newSelectedBlock.set((BasicBlock) collider);
+													hasBlockSelected = true;
+												}
+											}
+										});
+										if (newSelectedBlock.get() == null) {
+											hasBlockSelected = false;
+											guiComponentsBlock.clear();
+											runClear();
+										} else {
+											runClear();
+											guiComponentsBlock.clear();
+											newSelectedBlock.get().addProperties(guiComponentsBlock);
+											guiComponents.addAll(guiComponentsBlock);
 										}
-									});
-									if (!hasThing.get()) {
-										BasicBlock block = new BasicBlock(4, 4, () -> false);
-										block.move(
-												-(int) (screenX / 8) * 8 + (x * 8 + 16),
-												-(int) (screenY / 8) * 8 + (y * 8)
-										);
-										block.setImmovable();
-										Main.world.addCollider(block);
+										
+										if (!hasThing.get()) {
+											if (selectedBlock != null) {
+//												System.out.println(selectedBlock.getString());
+												Main.world.addCollider(BasicBlock.fromString(selectedBlock.getString().split(",")).move(
+														-(int) (screenX / 8) * 8 + (x * 8 + 16),
+														-(int) (screenY / 8) * 8 + (y * 8)
+												));
+											} else {
+												BasicBlock block = new BasicBlock(4, 4, () -> false);
+												block.move(
+														-(int) (screenX / 8) * 8 + (x * 8 + 16),
+														-(int) (screenY / 8) * 8 + (y * 8)
+												);
+												block.setImmovable();
+												Main.world.addCollider(block);
+											}
+										}
+										selectedBlock = newSelectedBlock.get();
 									}
 								} else if (Main.inputController.isRightDown()) {
 									int finalY = y;
@@ -199,6 +236,10 @@ public class GraphicsUI extends JComponent implements KeyListener {
 				AffineTransform transform = g2d.getTransform();
 				g2d.translate(x, 0);
 				g.drawImage(panel, 0, yPos, null);
+				for (int i = 0; i < guiComponentsBlock.size(); i++) {
+					guiComponentsBlock.get(i).setX((x / (float) frame.getWidth()) - 0.1f);
+					guiComponentsBlock.get(i).setY((i / 10f) + 0.3f);
+				}
 				g2d.setTransform(transform);
 				isLPanelExtending = false;
 				if (mx <= panel.getWidth(null) + x) {

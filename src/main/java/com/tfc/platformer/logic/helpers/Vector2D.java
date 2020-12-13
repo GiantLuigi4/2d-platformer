@@ -5,7 +5,7 @@ import com.tfc.platformer.utils.math.MathHelper;
 import java.util.Objects;
 
 public class Vector2D {
-	public static final Vector2D ZERO = new Vector2D(0,0);
+	public static final Vector2D ZERO = new Vector2D(0, 0);
 	public double x, y;
 	
 	public Vector2D(double x, double y) {
@@ -64,8 +64,8 @@ public class Vector2D {
 	
 	public Vector2D lerp(double progression, Vector2D other) {
 		return new Vector2D(
-				MathHelper.lerp(progression,x,other.x),
-				MathHelper.lerp(progression,y,other.y)
+				MathHelper.lerp(progression, x, other.x),
+				MathHelper.lerp(progression, y, other.y)
 		);
 	}
 }

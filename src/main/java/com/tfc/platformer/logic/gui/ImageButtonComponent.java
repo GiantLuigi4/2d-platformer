@@ -7,8 +7,8 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 public class ImageButtonComponent extends GuiComponent {
-	private float x,y;
-	private final float width,height;
+	private final float width, height;
+	private float x, y;
 	private final Runnable onClick;
 	private final Image image;
 	
@@ -52,6 +52,6 @@ public class ImageButtonComponent extends GuiComponent {
 	
 	@Override
 	public boolean isInBounds(float x, float y) {
-		return Box2D.create(this.x,this.y,width,height).collides(Box2D.create(x,y,0.001f,0.001f));
+		return Box2D.create(this.x, this.y, width, height).collides(Box2D.create(x, y, 0.001f, 0.001f));
 	}
 }

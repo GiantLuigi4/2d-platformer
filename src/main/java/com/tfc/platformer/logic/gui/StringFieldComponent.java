@@ -76,7 +76,13 @@ public class StringFieldComponent extends GuiComponent implements IKeyListenerCo
 	public void onKeyPressed(int key) {
 		if (key == 8) this.text.set(this.text.get().substring(0, this.text.get().length() - 1));
 		else if (key == 16) ;
-		else if (Main.inputController.isKeyPressed(16)) this.text.set(this.text.get() + ((char) key));
-		else this.text.set(this.text.get() + ((((char) key) + "").toLowerCase()));
+		else if (Main.inputController.isKeyPressed(16)) {
+			if (key == 45) {
+				this.text.set(this.text.get() + "_");
+			} else {
+				this.text.set(this.text.get() + ((char) key));
+			}
+		} else this.text.set(this.text.get() + ((((char) key) + "").toLowerCase()));
+		onClick.run();
 	}
 }
