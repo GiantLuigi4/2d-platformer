@@ -45,7 +45,7 @@ public class TextButtonComponent extends GuiComponent {
 		g2d.drawString(text,0,0);
 		g2d.setTransform(outline);
 		g2d.setColor(color.darker());
-		g2d.drawRect(0,0,20*2,3*2);
+		g2d.drawRect(0,0,40,6);
 		g2d.setTransform(source);
 	}
 	
