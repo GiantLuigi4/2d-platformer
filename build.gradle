@@ -13,7 +13,7 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
-    implementation 'com.github.GiantLuigi4:PhysicsWrapper:f91265095e'
+    implementation 'com.github.GiantLuigi4:PhysicsWrapper:02a6373'
 
     compile group: 'org.jbox2d', name: 'jbox2d', version: '2.2.1.1', ext: 'pom'
     compile group: 'org.jbox2d', name: 'jbox2d-serialization', version: '1.1.0'

@@ -1,11 +1,14 @@
 package com.tfc.platformer.logic;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 
-public class InputController implements KeyListener {
+public class InputController implements KeyListener, MouseListener, MouseMotionListener {
 	ArrayList<Integer> keys = new ArrayList<>();
+	boolean isLeftDown = false;
+	
+	Point mouse = null;
 	
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -28,5 +31,50 @@ public class InputController implements KeyListener {
 	
 	public boolean isKeyPressed(int d) {
 		return keys.contains(d);
+	}
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	}
+	
+	@Override
+	public void mousePressed(MouseEvent e) {
+		if (e.getButton() == 1) {
+			isLeftDown = true;
+		}
+	}
+	
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if (e.getButton() == 1) {
+			isLeftDown = false;
+		}
+	}
+	
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	
+	}
+	
+	@Override
+	public void mouseExited(MouseEvent e) {
+	
+	}
+	
+	public boolean isLeftDown() {
+		return isLeftDown;
+	}
+	
+	@Override
+	public void mouseDragged(MouseEvent e) {
+	}
+	
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		mouse = e.getPoint();
+	}
+	
+	public Point getMouse() {
+		return mouse;
 	}
 }

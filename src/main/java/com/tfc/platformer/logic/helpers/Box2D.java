@@ -1,5 +1,7 @@
 package com.tfc.platformer.logic.helpers;
 
+import javax.swing.*;
+
 public class Box2D {
 	private Line2D box;
 	
@@ -48,5 +50,14 @@ public class Box2D {
 	
 	public Vector2D getCenter() {
 		return box.getPoint(0.5);
+	}
+	
+	public static Box2D create(float x, float y, float width, float height) {
+		return new Box2D(
+				new Line2D(
+						new Vector2D(x,y),
+						new Vector2D(width,height)
+				)
+		);
 	}
 }

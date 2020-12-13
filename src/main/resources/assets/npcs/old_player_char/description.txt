@@ -1,0 +1,4 @@
+Here is the original player character. He was only able to walk and jump, and had a turn speed.
+He also moved extremely slowly, but jumped super high. One of his strengths, was that he was only one tile tall.
+This guy is from back before I used a proper physics engine, and planned to have the game in black and white.
+However, he did stare into the player's soul when idling, and also could slide down walls.
