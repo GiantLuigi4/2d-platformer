@@ -66,8 +66,8 @@ public class GraphicsWorld extends JComponent {
 				g2d.setTransform(transform1);
 			});
 			player.draw((Graphics2D) g);
-
-//			Main.oldPlayerNPC.render(g2d);
+			
+			Main.oldPlayerNPC.render(g2d);
 			Main.defaultPlayerNPC.render(g2d);
 			
 			g2d.setTransform(transform);
