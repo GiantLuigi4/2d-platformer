@@ -46,7 +46,11 @@ public class GraphicsWorld extends JComponent {
 			AffineTransform transform = g2d.getTransform();
 			
 			g2d.translate(frame.getWidth() / 2f, frame.getHeight() / 2f);
-			g2d.scale(10, 10);
+			if (!Main.inEditor) {
+				g2d.scale(10, 10);
+			} else {
+				g2d.scale(5, 5);
+			}
 			
 			g2d.translate(lastPosX, lastPosY);
 			if (Main.inEditor) {
@@ -62,6 +66,8 @@ public class GraphicsWorld extends JComponent {
 				g2d.setTransform(transform1);
 			});
 			player.draw((Graphics2D) g);
+			
+			Main.oldPlayerNpc.render(g2d);
 			
 			g2d.setTransform(transform);
 		}

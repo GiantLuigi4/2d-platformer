@@ -68,4 +68,11 @@ public class Vector2D {
 				MathHelper.lerp(progression, y, other.y)
 		);
 	}
+	
+	public double dist(Vector2D point1) {
+		return Math.sqrt(
+				((point1.x - x) * (point1.x - x)) +
+						((point1.y - y) * (point1.y - y))
+		);
+	}
 }

@@ -112,12 +112,13 @@ public class GraphicsUI extends JComponent implements KeyListener {
 		
 		Graphics2D g2d = ((Graphics2D) g);
 		
+		//TODO: rewrite the entire editor
 		if (Main.inEditor) {
 			{
 				AffineTransform transform = g2d.getTransform();
 				
 				g2d.translate(frame.getWidth() / 2f, frame.getHeight() / 2f);
-				g2d.scale(10, 10);
+				g2d.scale(5, 5);
 				
 				g2d.translate(worldGraphics.lastPosX, worldGraphics.lastPosY);
 				
@@ -137,8 +138,8 @@ public class GraphicsUI extends JComponent implements KeyListener {
 					myFromCenter = my - frame.getHeight() / 2f;
 				}
 				
-				mxFromCenter -= 55;
-				myFromCenter += 40;
+				mxFromCenter -= 10;
+				myFromCenter -= 18;
 				
 				float screenX = worldGraphics.lastPosX;
 				float screenY = worldGraphics.lastPosY;
@@ -151,8 +152,9 @@ public class GraphicsUI extends JComponent implements KeyListener {
 						if (x == 0 || y == 0) g2d.setColor(new Color(0, 255, 0));
 						else g2d.setColor(new Color(128, 128, 128));
 						
-						if (((mxFromCenter + offX)) / 80 >= (x - 1) && ((mxFromCenter + offX)) / 80 <= (x))
-							if (((myFromCenter - offY)) / 80 >= (y) && ((myFromCenter - offY)) / 80 <= (y + 1)) {
+						int scl = 8 * 5;
+						if (((mxFromCenter - offX)) / scl >= (x - 1) && ((mxFromCenter - offX)) / scl <= (x))
+							if (((myFromCenter - offY)) / scl >= (y) && ((myFromCenter - offY)) / scl <= (y + 1)) {
 								g2d.setColor(new Color(255, 0, 0));
 								if (Main.inputController.isLeftDown()) {
 									if (!didClick.get()) {
@@ -164,7 +166,7 @@ public class GraphicsUI extends JComponent implements KeyListener {
 										Main.world.getColliders().forEach((collider) -> {
 											if (collider instanceof BasicBlock) {
 												if (
-														((BasicBlock) collider).getX() == -(int) (screenX / 8) * 8 + (finalX * 8 + 16) &&
+														(((BasicBlock) collider).getX()) == -(int) (screenX / 8) * 8 + (finalX * 8) &&
 																((BasicBlock) collider).getY() == -(int) (screenY / 8) * 8 + (finalY * 8)
 												) {
 													hasThing.set(true);
@@ -188,13 +190,13 @@ public class GraphicsUI extends JComponent implements KeyListener {
 											if (selectedBlock != null) {
 //												System.out.println(selectedBlock.getString());
 												Main.world.addCollider(BasicBlock.fromString(selectedBlock.getString().split(",")).move(
-														-(int) (screenX / 8) * 8 + (x * 8 + 16),
+														-(int) (screenX / 8) * 8 + (x * 8),
 														-(int) (screenY / 8) * 8 + (y * 8)
 												));
 											} else {
 												BasicBlock block = new BasicBlock(4, 4, () -> false);
 												block.move(
-														-(int) (screenX / 8) * 8 + (x * 8 + 16),
+														-(int) (screenX / 8) * 8 + (x * 8),
 														-(int) (screenY / 8) * 8 + (y * 8)
 												);
 												block.setImmovable();
@@ -206,14 +208,17 @@ public class GraphicsUI extends JComponent implements KeyListener {
 								} else if (Main.inputController.isRightDown()) {
 									int finalY = y;
 									int finalX = x;
-									Main.world.getColliders().forEach((collider) -> {
-										if (collider instanceof BasicBlock) {
-											if (
-													((BasicBlock) collider).getX() == -(int) (screenX / 8) * 8 + (finalX * 8 + 16) &&
-															((BasicBlock) collider).getY() == -(int) (screenY / 8) * 8 + (finalY * 8)
-											) Main.world.removeCollider(collider);
-										}
-									});
+									try {
+										Main.world.getColliders().forEach((collider) -> {
+											if (collider instanceof BasicBlock) {
+												if (
+														((BasicBlock) collider).getX() == -(int) (screenX / 8) * 8 + (finalX * 8) &&
+																((BasicBlock) collider).getY() == -(int) (screenY / 8) * 8 + (finalY * 8)
+												) Main.world.removeCollider(collider);
+											}
+										});
+									} catch (Throwable ignored) {
+									}
 								}
 							}
 						
