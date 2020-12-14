@@ -37,7 +37,8 @@ public class Main {
 	public static boolean inEditor = false;
 	
 	//TODO: remove
-	public static final NPC oldPlayerNpc = new NPC(0, 0, 6, 8, 8, 4);
+	public static final NPC oldPlayerNPC = new NPC(0, 0, 6, 8, 8, 4);
+	public static final NPC defaultPlayerNPC = new NPC(0, 0, 3, 8, 16, 3);
 	
 	public static WrapperWorld world;
 	public static InputController inputController = new InputController();
@@ -61,7 +62,7 @@ public class Main {
 //			y += new Random().nextInt(3) - 1;
 //		}
 		
-		loadRoom("pathfinding_test");
+		loadRoom("pathfinding_test_2");
 //		genRoom(10,10);
 		window.setIconImage(ResourceManager.getImage("assets/textures/icon/16x.png"));
 		
@@ -288,14 +289,20 @@ public class Main {
 	
 	public static void tick() {
 		try {
-			if (!inGame) oldPlayerNpc.pathFindingNodes.clear();
+			if (!inGame) {
+				oldPlayerNPC.pathFindingNodes.clear();
+				defaultPlayerNPC.pathFindingNodes.clear();
+			}
 			if (inGame) {
 //				System.out.println(playerCollider.getX());
 //				System.out.println(playerCollider.getY());
-				oldPlayerNpc.tick();
-				oldPlayerNpc.goalX = 96;
+				oldPlayerNPC.tick();
+				defaultPlayerNPC.tick();
+				oldPlayerNPC.goalX = 96;
+				defaultPlayerNPC.goalX = 96;
 //				oldPlayerNpc.goalX = 136;
-				oldPlayerNpc.goalY = -8;
+				oldPlayerNPC.goalY = -8;
+				defaultPlayerNPC.goalY = -8;
 
 //				clearWorld();
 //				Random rand = new Random(392313);

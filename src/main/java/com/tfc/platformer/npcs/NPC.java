@@ -23,6 +23,7 @@ public class NPC {
 	
 	public void tick() {
 //		pathFindingNodes.clear();
+		//TODO: make it make sure jumps are possible instead of just assuming that it is
 		if (pathFindingNodes.isEmpty()) {
 			Vector2D point = new Vector2D(x + 8, y);
 			if (Main.getBlock((int) (x / 8 + 1), (int) (y / 8)) == null) {
@@ -45,7 +46,7 @@ public class NPC {
 				boolean isGoingLeft = goalX < lastNode.x;
 				boolean goingUp = goalY < lastNode.y;
 				for (int offX = 0; offX++ < moveSpeed; ) {
-					double min = -4;
+					double min = -Math.ceil(jumpHeight);
 					double max = jumpHeight;
 //					if (goingUp) {
 //						max = jumpHeight;
